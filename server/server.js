@@ -53,3 +53,5 @@ connectDB()
     console.log("mongodb connection failed!", err);
 
   })
+
+module.exports = app;
