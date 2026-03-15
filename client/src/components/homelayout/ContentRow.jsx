@@ -57,7 +57,7 @@ const ContentRow = ({ title, endpoint, sectionKey, cardSize = 'md' }) => {
       {showLeftArrow && (
         <button
           onClick={() => scroll('left')}
-          className="absolute left-0 top-1/2 -translate-y-1/2 z-40 bg-black/60 hover:bg-black/90 text-white p-2 rounded-full backdrop-blur-sm opacity-0 group-hover/row:opacity-100 transition-opacity duration-300 hidden sm:flex -ml-4 shadow-lg border border-white/10"
+          className="absolute left-0 top-1/2 -translate-y-1/2 z-70 bg-black/60 hover:bg-black/90 text-white p-2 rounded-full backdrop-blur-sm opacity-0 group-hover/row:opacity-100 transition-opacity duration-300 hidden sm:flex -ml-4 shadow-lg border border-white/10"
           aria-label="Scroll left"
         >
           <ChevronLeft size={28} />
@@ -77,6 +77,7 @@ const ContentRow = ({ title, endpoint, sectionKey, cardSize = 'md' }) => {
               title={item.title}
               releaseYear={item.release_year}
               cardSize={cardSize}
+              showYearBadge={sectionKey === 'latest-movies'}
             />
           </div>
         ))}
@@ -85,7 +86,7 @@ const ContentRow = ({ title, endpoint, sectionKey, cardSize = 'md' }) => {
       {showRightArrow && data.length > 0 && (
         <button
           onClick={() => scroll('right')}
-          className="absolute right-0 top-1/2 -translate-y-1/2 z-40 bg-black/60 hover:bg-black/90 text-white p-2 rounded-full backdrop-blur-sm opacity-0 group-hover/row:opacity-100 transition-opacity duration-300 hidden sm:flex -mr-4 shadow-lg border border-white/10"
+          className="absolute right-0 top-1/2 -translate-y-1/2 z-70 bg-black/60 hover:bg-black/90 text-white p-2 rounded-full backdrop-blur-sm opacity-0 group-hover/row:opacity-100 transition-opacity duration-300 hidden sm:flex -mr-4 shadow-lg border border-white/10"
           aria-label="Scroll right"
         >
           <ChevronRight size={28} />

@@ -2,7 +2,7 @@ import React from 'react';
 
 const Button = ({ children, className = '', variant = 'primary', size = 'default', ...props }) => {
   const baseStyles = 'inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none disabled:cursor-not-allowed';
-  
+
   const variants = {
     primary: 'bg-primary text-white hover:opacity-90',
     secondary: 'bg-neutral-800 text-white hover:bg-neutral-700',

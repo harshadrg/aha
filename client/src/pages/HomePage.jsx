@@ -8,19 +8,25 @@ const HomePage = () => {
     <div className="pb-12 text-white bg-black min-h-screen">
       <HeroBanner />
       <div className="p-8 mx-auto space-y-8 mt-4">
-        <ContentRow title="Trending" endpoint="/api/contents?sort=popularity" sectionKey="trending" cardSize="sm" />
+        <ContentRow title="Trending" endpoint="/api/contents?section=trending" sectionKey="trending" cardSize="sm" />
         
+        <ContentRow
+          title="Watch Tamil & Telugu"
+          endpoint="/api/contents?language=Tamil,Telugu"
+          sectionKey="tamil-telugu"
+        />
+
         {/* Injected 2 Banners Here */}
-        <PromoBannerRow endpoint="/api/contents?type=original&sort=popularity" />
+        <PromoBannerRow endpoint="/api/contents?type=original&section=trending" />
 
         <ContentRow
           title="Latest Movies"
-          endpoint="/api/contents?type=movie&sort=release_date"
-          sectionKey="movies"
+          endpoint="/api/contents?section=latest"
+          sectionKey="latest-movies"
         />
         <ContentRow
           title="Binge-Worthy Shows"
-          endpoint="/api/contents?type=show&sort=rating"
+          endpoint="/api/contents?type=show&section=popular"
           sectionKey="shows"
         />
       </div>

@@ -8,9 +8,12 @@ export const getContents = async (req, res) => {
   try {
     const { type, section, limit = 10 } = req.query;
 
-    // Build filter object: optionally filter by content type
     const filter = {};
     if (type) filter.type = type;
+    if (req.query.language) {
+      const languages = req.query.language.split(',');
+      filter.language = { $in: languages };
+    }
 
     const itemLimit = Math.max(1, Math.min(parseInt(limit) || 10, 100)); // clamp between 1–100
 
@@ -73,6 +76,10 @@ export const getCollections = async (req, res) => {
     // Build filter: optionally filter by type
     const filter = {};
     if (type) filter.type = type;
+    if (req.query.language) {
+      const languages = req.query.language.split(',');
+      filter.language = { $in: languages };
+    }
 
     let contents;
 
