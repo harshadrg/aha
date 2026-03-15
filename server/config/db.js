@@ -1,13 +1,19 @@
 import mongoose from "mongoose";
 
-// Connect to MongoDB using the MONGO_URI from .env
+let isConnected = false;
+
 const connectDB = async () => {
+  if (isConnected) {
+    return; // Already connected, don't do anything
+  }
+
   try {
-    const connectionInstance = await mongoose.connect(`${process.env.MONGO_URI}`);
-    console.log(`✅ MongoDB Connected: ${connectionInstance.connection.host}`);
+    const db = await mongoose.connect(process.env.MONGO_URI);
+    isConnected = db.connections[0].readyState;
+    console.log(`✅ MongoDB Connected: ${db.connection.host}`);
   } catch (error) {
     console.error(`❌ MongoDB Connection Failed: ${error.message}`);
-    process.exit(1); // Exit process on failure
+    // Don't use process.exit(1) on Vercel!
   }
 };
 

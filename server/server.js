@@ -1,11 +1,12 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import dns from 'dns'
+import dns from 'dns';
 
-dns.setServers(["1.1.1.1", "8.8.8.8"])
+// Fix for some DNS resolution issues in specific environments
+dns.setServers(["1.1.1.1", "8.8.8.8"]);
 
-// Load environment variables from .env
+// Load environment variables
 dotenv.config();
 
 import connectDB from "./config/db.js";
@@ -17,41 +18,58 @@ const app = express();
 // ─────────────────────────────────────────────
 // Middleware
 // ─────────────────────────────────────────────
-app.use(cors());              // Enable Cross-Origin Resource Sharing
-app.use(express.json());      // Parse incoming JSON request bodies
+app.use(cors());
+app.use(express.json());
+
+// ─────────────────────────────────────────────
+// Database Connection Middleware (For Vercel)
+// ─────────────────────────────────────────────
+// This ensures that on Vercel, every request checks for a DB connection
+// before trying to execute route logic.
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    res.status(500).json({ error: "Database connection failed" });
+  }
+});
 
 // ─────────────────────────────────────────────
 // Mount Routes
 // ─────────────────────────────────────────────
 app.use("/api/menus", menuRoutes);
 app.use("/api/contents", contentRoutes);
-app.use("/api/collections", contentRoutes); // Reuse content router for collections
+app.use("/api/collections", contentRoutes);
+
+// Root route for testing
+app.get("/", (req, res) => {
+  res.send("Aha Clone API is running...");
+});
 
 // ─────────────────────────────────────────────
-// Connect to MongoDB, then start the server
+// Execution Logic (Local vs Production)
 // ─────────────────────────────────────────────
-const PORT = process.env.PORT || 5000;
 
-// connectDB().then(() => {
-//   app.listen(PORT, () => {
-//     console.log(`🚀 Server running on http://localhost:${PORT}`);
-//   });
-// });
-
-connectDB()
-  .then(() => {
-    app.on("errorr", ((error) => {
-      console.log("ERRORR:", error);
-      throw error
-
-    }))
-    app.listen(PORT || 5000, () => {
-      console.log(`Server is running on port: ${process.env.PORT}`);
-    })
-  })
-  .catch((err) => {
-    console.log("mongodb connection failed!", err);
-
-  })
-
+// 1. Export the app for Vercel's Serverless environment
 export default app;
+
+// 2. Only start the listener if we are running locally.
+// Vercel sets NODE_ENV to 'production' by default.
+if (process.env.NODE_ENV !== 'production') {
+  const PORT = process.env.PORT || 5000;
+
+  connectDB()
+    .then(() => {
+      const server = app.listen(PORT, () => {
+        console.log(`🚀 Local server running on http://localhost:${PORT}`);
+      });
+
+      server.on("error", (error) => {
+        console.error("Local Server Error:", error);
+      });
+    })
+    .catch((err) => {
+      console.error("Local MongoDB connection failed!", err);
+    });
+}
