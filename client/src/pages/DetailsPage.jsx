@@ -56,15 +56,15 @@ const DetailsPage = () => {
         <div className="absolute inset-0 bg-gradient-to-r from-black/95 via-black/70 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
 
-        <div className="absolute bottom-0 left-0 right-0 p-6 md:p-12 max-w-4xl z-10 flex flex-col md:flex-row gap-8 items-end md:items-start">
+        <div className="relative bottom-0 left-0 right-0 p-6 md:p-12 max-w-4xl z-10 flex flex-col gap-6 items-start">
 
-          {/* Poster */}
-          <div className="hidden md:block w-48 shrink-0 rounded-lg overflow-hidden shadow-2xl border border-white/10">
+          {/* Banner image above details */}
+          <div className="hidden md:block w-72 rounded-xl overflow-hidden shadow-2xl border border-white/10">
             <img
-              src={item.poster_url}
-              alt={`${item.title} Poster`}
-              className="w-full h-auto object-cover aspect-[2/3]"
-              onError={(e) => fallbackImg(e, 'https://via.placeholder.com/400x600/1a1a1a/5a5a5a?text=Aha')}
+              src={item.banner_url}
+              alt={`${item.title} Banner`}
+              className="w-full h-auto object-cover"
+              onError={(e) => fallbackImg(e, item.poster_url || 'https://via.placeholder.com/800x450/1a1a1a/5a5a5a?text=Aha')}
             />
           </div>
 
@@ -128,7 +128,7 @@ const DetailsPage = () => {
       </div>
 
       {/* Details */}
-      <div className="max-w-7xl mx-auto px-6 md:px-12 py-12">
+      <div className="max-w-7xl mt-16 mx-auto px-6 md:px-12 py-12">
         <h3 className="text-xl font-bold mb-6 text-primary border-b border-neutral-800 pb-2">More Information</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           <DetailField label="Cast" value={item.cast?.join(', ')} />

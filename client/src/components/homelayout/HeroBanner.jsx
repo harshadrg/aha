@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import useFetch from '../../hooks/useFetch';
 import { ChevronLeft, ChevronRight } from '../ui/Icons';
+import BannerCard from '../ui/BannerCard';
 
 const HeroBanner = () => {
   const [slides, setSlides] = useState([]);
@@ -46,7 +47,6 @@ const HeroBanner = () => {
   const item = slides[current];
 
   return (
-    // Mobile: 16:9-ish ratio via vw | Tablet: 60vh | Laptop+: 78vh
     <div className="relative w-full h-[56vw] min-h-[260px] md:h-[60vh] lg:h-[78vh] bg-black">
 
       {/* Background */}
@@ -65,7 +65,7 @@ const HeroBanner = () => {
       {/* Left Panel */}
       <div className="absolute bottom-3 sm:bottom-6 lg:bottom-8 left-0 flex flex-col px-4 sm:px-8 md:px-14 z-10 gap-2 sm:gap-3 lg:gap-4 max-w-[70%] sm:max-w-[55%] lg:max-w-[42%]">
 
-        {/* Badges — hidden on smallest screens */}
+        {/* Badges */}
         <div className="hidden sm:flex gap-2 flex-wrap">
           {item.is_original && (
             <span className="px-2 py-0.5 bg-red-600 rounded text-[10px] font-bold text-white uppercase tracking-widest">
@@ -86,15 +86,9 @@ const HeroBanner = () => {
 
         {/* Meta */}
         <div className="flex gap-2 sm:gap-3 text-xs sm:text-sm items-center flex-wrap font-medium">
-          {item.rating && (
-            <span className="text-yellow-400 font-bold">⭐ {item.rating}</span>
-          )}
-          {item.release_year && (
-            <span className="text-neutral-400">{item.release_year}</span>
-          )}
-          {item.duration && (
-            <span className="hidden sm:inline text-neutral-400">{item.duration}</span>
-          )}
+          {item.rating && <span className="text-yellow-400 font-bold">⭐ {item.rating}</span>}
+          {item.release_year && <span className="text-neutral-400">{item.release_year}</span>}
+          {item.duration && <span className="hidden sm:inline text-neutral-400">{item.duration}</span>}
           {item.language && (
             <span className="px-1.5 py-0.5 border border-neutral-600 rounded text-[10px] sm:text-[11px] text-neutral-300 uppercase">
               {item.language}
@@ -102,44 +96,44 @@ const HeroBanner = () => {
           )}
         </div>
 
-        {/* Description — only md+ */}
+        {/* Description */}
         <p className="hidden md:block line-clamp-2 text-neutral-300 text-sm leading-relaxed m-0 max-w-sm">
           {item.description}
         </p>
 
-        {/* Thumbnail Strip — hidden on mobile, shown sm+ */}
-        <div className="hidden sm:flex items-center gap-2 mt-1">
+        {/* Thumbnail Strip */}
+        <div className="hidden sm:flex items-center gap-1.5 mt-1">
           <button
             onClick={() => goTo(current - 1)}
             disabled={current === 0}
             className="flex-shrink-0 p-1 rounded-full bg-white/10 hover:bg-white/25 disabled:opacity-25 disabled:cursor-not-allowed text-white transition-all duration-200"
           >
-            <ChevronLeft size={14} />
+            <ChevronLeft size={12} />
           </button>
 
           {thumbSlots.map((entry, slotIdx) =>
             !entry ? (
-              <div key={`empty-${slotIdx}`} className="flex-shrink-0 w-16 h-10 md:w-24 md:h-14 rounded-md bg-white/5" />
+              <div key={`empty-${slotIdx}`} className="flex-shrink-0 w-16 h-9 md:w-24 md:h-14 rounded-md bg-white/5" />
             ) : (
-              <button
+              /* Wrapper: overlay intercepts click so BannerCard's Link doesn't navigate */
+              <div
                 key={entry.idx}
-                onClick={() => goTo(entry.idx)}
-                className={`relative flex-shrink-0 w-16 h-10 md:w-24 md:h-14 rounded-md overflow-hidden border-2 transition-all duration-300 ${slotIdx === 1
-                  ? 'border-red-500 scale-105 shadow-md shadow-red-900/50 opacity-100'
-                  : 'border-white/20 hover:border-white/60 opacity-55 hover:opacity-100'
+                className={`relative flex-shrink-0 w-16 md:w-24 cursor-pointer transition-all duration-300 ${slotIdx === 1 ? 'scale-105 opacity-100' : 'opacity-50 hover:opacity-80'
                   }`}
               >
-                <img
-                  src={entry.slide.poster_url || entry.slide.banner_url}
-                  alt={entry.slide.title}
-                  className="w-full h-full object-cover"
-                  onError={(e) => { e.target.onerror = null; e.target.src = ''; }}
+                <BannerCard
+                  id={entry.slide._id || entry.slide.id}
+                  bannerUrl={entry.slide.banner_url}
+                  active={slotIdx === 1}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-1">
-                  <span className="text-[7px] md:text-[8px] text-white font-semibold line-clamp-1">{entry.slide.title}</span>
-                </div>
-                {slotIdx === 1 && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-red-500" />}
-              </button>
+                {/* Transparent overlay to capture click for slide change instead of navigation */}
+                {slotIdx !== 1 && (
+                  <div
+                    className="absolute inset-0 z-10"
+                    onClick={() => goTo(entry.idx)}
+                  />
+                )}
+              </div>
             )
           )}
 
@@ -148,7 +142,7 @@ const HeroBanner = () => {
             disabled={current === slides.length - 1}
             className="flex-shrink-0 p-1 rounded-full bg-white/10 hover:bg-white/25 disabled:opacity-25 disabled:cursor-not-allowed text-white transition-all duration-200"
           >
-            <ChevronRight size={14} />
+            <ChevronRight size={12} />
           </button>
 
           <span className="text-[10px] text-neutral-400 ml-0.5 flex-shrink-0">
@@ -157,7 +151,7 @@ const HeroBanner = () => {
         </div>
       </div>
 
-      {/* Mobile dots — replaces thumbnail strip on xs */}
+      {/* Mobile dots */}
       <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-10 sm:hidden">
         {slides.map((_, i) => (
           <button
