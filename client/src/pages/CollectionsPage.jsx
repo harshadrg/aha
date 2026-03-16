@@ -5,10 +5,10 @@ import { ArrowLeft } from '../components/ui/Icons';
 
 const getCollectionInfo = (key) => {
   switch (key) {
-    case 'trending': return { title: 'Trending Now', endpoint: '/api/contents?sort=popularity' };
-    case 'movies': return { title: 'Latest Movies', endpoint: '/api/contents?type=movie&sort=release_date' };
-    case 'shows': return { title: 'Binge-Worthy Shows', endpoint: '/api/contents?type=show&sort=rating' };
-    default: return { title: 'Collection', endpoint: '/api/contents' };
+    case 'trending': return { title: 'Trending Now', endpoint: '/api/collections?section=trending' };
+    case 'movies': return { title: 'Latest Movies', endpoint: '/api/collections?type=movie&section=latest' };
+    case 'shows': return { title: 'Binge-Worthy Shows', endpoint: '/api/collections?type=show&section=popular' };
+    default: return { title: 'Collection', endpoint: '/api/collections' };
   }
 };
 
