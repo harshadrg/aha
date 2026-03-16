@@ -1,7 +1,8 @@
 import { useParams, Link } from 'react-router';
 import useFetch from '../hooks/useFetch';
 import Button from '../components/ui/Button';
-import { Play, Share, Star } from '../components/ui/Icons';
+import { Share } from '../components/ui/Icons';
+import ThumbnailCard from '../components/ui/ThumbnailCard';
 
 const MetaBadge = ({ children, className = '' }) => (
   <span className={`px-2 py-1 rounded text-xs font-medium ${className}`}>{children}</span>
@@ -46,7 +47,7 @@ const DetailsPage = () => {
     <div className="min-h-screen bg-black text-white pb-20">
 
       {/* Hero */}
-      <div className="relative w-full h-[50vh] md:h-[70vh] min-h-[400px]">
+      <div className="relative w-full min-h-[560px] md:min-h-[680px] h-[70vh] md:h-[85vh] pt-16">
         <img
           src={item.banner_url || item.poster_url}
           alt={item.title}
@@ -56,15 +57,14 @@ const DetailsPage = () => {
         <div className="absolute inset-0 bg-gradient-to-r from-black/95 via-black/70 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
 
-        <div className="relative bottom-0 left-0 right-0 p-6 md:p-12 max-w-4xl z-10 flex flex-col gap-6 items-start">
+        {/* absolute bottom-0 pins content to hero bottom — hero is in normal flow so no navbar overlap */}
+        <div className="absolute bottom-8 left-0 right-0 pl-10 md:pl-16 pr-6 md:pr-12 py-6 md:py-12 max-w-4xl z-10 flex flex-col gap-6 items-start">
 
-          {/* Banner image above details */}
-          <div className="hidden md:block w-72 rounded-xl overflow-hidden shadow-2xl border border-white/10">
-            <img
-              src={item.banner_url}
-              alt={`${item.title} Banner`}
-              className="w-full h-auto object-cover"
-              onError={(e) => fallbackImg(e, item.poster_url || 'https://via.placeholder.com/800x450/1a1a1a/5a5a5a?text=Aha')}
+          {/* ThumbnailCard — slightly larger w-80, hidden on mobile */}
+          <div className="hidden md:block w-80">
+            <ThumbnailCard
+              title={item.title}
+              thumbnailUrl={item.thumbnail_url}
             />
           </div>
 

@@ -18,6 +18,11 @@ const contentSchema = new mongoose.Schema(
       type: String,
     },
 
+    // URL for the thumbnail image (16:9)
+    thumbnail_url: {
+      type: String,
+    },
+
     // URL for the banner image (landscape / hero)
     banner_url: {
       type: String,
