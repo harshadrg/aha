@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import useFetch from '../../hooks/useFetch';
 import { ChevronLeft, ChevronRight } from '../ui/Icons';
 import BannerCard from '../ui/BannerCard';
+import ThumbnailCard from '../ui/ThumbnailCard';
 
 const HeroBanner = () => {
   const [slides, setSlides] = useState([]);
@@ -47,14 +48,14 @@ const HeroBanner = () => {
   const item = slides[current];
 
   return (
-    <div className="relative w-full h-[56vw] min-h-[260px] md:h-[60vh] lg:h-[78vh] bg-black">
+    <div className="relative w-full h-[56vw] min-h-[260px] md:h-[60vh] lg:h-[78vh] bg-black overflow-hidden">
 
       {/* Background */}
       <img
         key={current}
         src={item.banner_url || item.poster_url}
         alt={item.title}
-        className="absolute inset-0 w-full h-full object-contain md:object-cover object-top animate-[fadeIn_0.7s_ease-in-out]"
+        className="absolute inset-0 w-full h-full object-cover object-top animate-[fadeIn_0.7s_ease-in-out]"
         onError={(e) => { e.target.onerror = null; e.target.src = item.poster_url || ''; }}
       />
 
@@ -62,97 +63,24 @@ const HeroBanner = () => {
       <div className="absolute inset-0 bg-gradient-to-r from-black via-black/65 to-transparent" />
       <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
 
-      {/* Left Panel */}
-      <div className="absolute bottom-3 sm:bottom-6 lg:bottom-8 left-0 flex flex-col px-4 sm:px-8 md:px-14 z-10 gap-2 sm:gap-3 lg:gap-4 max-w-[70%] sm:max-w-[55%] lg:max-w-[42%]">
-
-        {/* Badges */}
-        <div className="hidden sm:flex gap-2 flex-wrap">
-          {item.is_original && (
-            <span className="px-2 py-0.5 bg-red-600 rounded text-[10px] font-bold text-white uppercase tracking-widest">
-              Original
-            </span>
-          )}
-          {(item.genre || []).slice(0, 3).map((g) => (
-            <span key={g} className="px-2 py-0.5 bg-white/15 backdrop-blur-sm border border-white/20 rounded text-[10px] font-semibold text-white uppercase tracking-wider">
-              {g}
-            </span>
-          ))}
-        </div>
-
-        {/* Title */}
-        <h1 className="text-[clamp(14px,4vw,50px)] font-black leading-[1.1] text-white drop-shadow-2xl m-0">
+      {/* ── MOBILE layout — only Title + Meta, bottom of hero ── */}
+      <div className="md:hidden absolute bottom-8 left-0 right-0 px-5 z-10 flex flex-col gap-2">
+        <h1 className="text-[clamp(16px,5vw,28px)] font-black leading-tight text-white drop-shadow-2xl">
           {item.title}
         </h1>
-
-        {/* Meta */}
-        <div className="flex gap-2 sm:gap-3 text-xs sm:text-sm items-center flex-wrap font-medium">
+        <div className="flex gap-2 text-xs items-center flex-wrap font-medium">
           {item.rating && <span className="text-yellow-400 font-bold">⭐ {item.rating}</span>}
           {item.release_year && <span className="text-neutral-400">{item.release_year}</span>}
-          {item.duration && <span className="hidden sm:inline text-neutral-400">{item.duration}</span>}
           {item.language && (
-            <span className="px-1.5 py-0.5 border border-neutral-600 rounded text-[10px] sm:text-[11px] text-neutral-300 uppercase">
+            <span className="px-1.5 py-0.5 border border-neutral-600 rounded text-[10px] text-neutral-300 uppercase">
               {item.language}
             </span>
           )}
         </div>
-
-        {/* Description */}
-        <p className="hidden md:block line-clamp-2 text-neutral-300 text-sm leading-relaxed m-0 max-w-sm">
-          {item.description}
-        </p>
-
-        {/* Thumbnail Strip */}
-        <div className="hidden sm:flex items-center gap-1.5 mt-1">
-          <button
-            onClick={() => goTo(current - 1)}
-            disabled={current === 0}
-            className="flex-shrink-0 p-1 rounded-full bg-white/10 hover:bg-white/25 disabled:opacity-25 disabled:cursor-not-allowed text-white transition-all duration-200"
-          >
-            <ChevronLeft size={12} />
-          </button>
-
-          {thumbSlots.map((entry, slotIdx) =>
-            !entry ? (
-              <div key={`empty-${slotIdx}`} className="flex-shrink-0 w-16 h-9 md:w-24 md:h-14 rounded-md bg-white/5" />
-            ) : (
-              /* Wrapper: overlay intercepts click so BannerCard's Link doesn't navigate */
-              <div
-                key={entry.idx}
-                className={`relative flex-shrink-0 w-16 md:w-24 cursor-pointer transition-all duration-300 ${slotIdx === 1 ? 'scale-105 opacity-100' : 'opacity-50 hover:opacity-80'
-                  }`}
-              >
-                <BannerCard
-                  id={entry.slide._id || entry.slide.id}
-                  bannerUrl={entry.slide.banner_url}
-                  active={slotIdx === 1}
-                />
-                {/* Transparent overlay to capture click for slide change instead of navigation */}
-                {slotIdx !== 1 && (
-                  <div
-                    className="absolute inset-0 z-10"
-                    onClick={() => goTo(entry.idx)}
-                  />
-                )}
-              </div>
-            )
-          )}
-
-          <button
-            onClick={() => goTo(current + 1)}
-            disabled={current === slides.length - 1}
-            className="flex-shrink-0 p-1 rounded-full bg-white/10 hover:bg-white/25 disabled:opacity-25 disabled:cursor-not-allowed text-white transition-all duration-200"
-          >
-            <ChevronRight size={12} />
-          </button>
-
-          <span className="text-[10px] text-neutral-400 ml-0.5 flex-shrink-0">
-            {current + 1}/{slides.length}
-          </span>
-        </div>
       </div>
 
       {/* Mobile dots */}
-      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-10 sm:hidden">
+      <div className="absolute bottom-3 right-4 flex gap-1.5 z-10 sm:hidden">
         {slides.map((_, i) => (
           <button
             key={i}
@@ -160,6 +88,80 @@ const HeroBanner = () => {
             className={`h-1 rounded-full transition-all duration-300 ${i === current ? 'bg-red-500 w-4' : 'bg-white/40 w-1'}`}
           />
         ))}
+      </div>
+
+      {/* ── DESKTOP layout — ThumbnailCard + Meta + Thumbnail Strip, centered vertically on left ── */}
+      <div className="hidden md:flex absolute inset-y-0 left-0 z-10 pl-14 pr-12 items-center">
+        <div className="flex flex-col gap-8 items-center">
+
+          {/* ThumbnailCard */}
+          <div className="w-72 lg:w-80">
+            <ThumbnailCard
+              title={item.title}
+              thumbnailUrl={item.thumbnail_url}
+            />
+          </div>
+
+          {/* Meta */}
+          <div className="flex gap-3 text-sm items-center flex-wrap font-medium">
+            {item.rating && <span className="text-yellow-400 font-bold">⭐ {item.rating}</span>}
+            {item.release_year && <span className="text-neutral-400">{item.release_year}</span>}
+            {item.duration && <span className="text-neutral-400">{item.duration}</span>}
+            {item.language && (
+              <span className="px-1.5 py-0.5 border border-neutral-600 rounded text-[11px] text-neutral-300 uppercase">
+                {item.language}
+              </span>
+            )}
+          </div>
+
+          {/* Thumbnail Strip */}
+          <div className="flex items-center gap-1.5">
+            <button
+              onClick={() => goTo(current - 1)}
+              disabled={current === 0}
+              className="flex-shrink-0 p-1 rounded-full bg-white/10 hover:bg-white/25 disabled:opacity-25 disabled:cursor-not-allowed text-white transition-all duration-200"
+            >
+              <ChevronLeft size={12} />
+            </button>
+
+            {thumbSlots.map((entry, slotIdx) =>
+              !entry ? (
+                <div key={`empty-${slotIdx}`} className="flex-shrink-0 w-16 h-9 md:w-24 md:h-14 rounded-md bg-white/5" />
+              ) : (
+                <div
+                  key={entry.idx}
+                  className={`relative flex-shrink-0 w-16 md:w-24 cursor-pointer transition-all duration-300 ${slotIdx === 1 ? 'scale-105 opacity-100' : 'opacity-50 hover:opacity-80'
+                    }`}
+                >
+                  <BannerCard
+                    id={entry.slide._id || entry.slide.id}
+                    bannerUrl={entry.slide.banner_url}
+                    active={slotIdx === 1}
+                  />
+                  {slotIdx !== 1 && (
+                    <div
+                      className="absolute inset-0 z-10"
+                      onClick={() => goTo(entry.idx)}
+                    />
+                  )}
+                </div>
+              )
+            )}
+
+            <button
+              onClick={() => goTo(current + 1)}
+              disabled={current === slides.length - 1}
+              className="flex-shrink-0 p-1 rounded-full bg-white/10 hover:bg-white/25 disabled:opacity-25 disabled:cursor-not-allowed text-white transition-all duration-200"
+            >
+              <ChevronRight size={12} />
+            </button>
+
+            <span className="text-[10px] text-neutral-400 ml-0.5 flex-shrink-0">
+              {current + 1}/{slides.length}
+            </span>
+          </div>
+
+        </div>
       </div>
 
     </div>
