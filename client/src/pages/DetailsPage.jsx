@@ -43,7 +43,6 @@ const DetailsPage = () => {
     e.target.src = fallback;
   };
 
-  // Shared info block used in both mobile and desktop layouts
   const InfoBlock = () => (
     <div className="flex flex-col gap-4">
       {/* Badges */}
@@ -57,7 +56,7 @@ const DetailsPage = () => {
       </div>
 
       {/* Title */}
-      <h1 className="text-2xl md:text-5xl lg:text-6xl font-extrabold leading-tight">
+      <h1 className="text-2xl md:text-4xl lg:text-5xl font-extrabold leading-tight">
         {item.title}
       </h1>
 
@@ -102,9 +101,8 @@ const DetailsPage = () => {
   return (
     <div className="min-h-screen bg-black text-white pb-20">
 
-      {/* ── MOBILE layout — image on top, info below in normal flow ── */}
+      {/* ── MOBILE layout ── */}
       <div className="md:hidden">
-        {/* Banner image */}
         <div className="relative w-full aspect-video">
           <img
             src={item.banner_url || item.poster_url}
@@ -114,14 +112,14 @@ const DetailsPage = () => {
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
         </div>
-        {/* Info flows naturally below the image — no overflow possible */}
         <div className="px-5 py-6 flex flex-col gap-6 bg-black">
           <InfoBlock />
         </div>
       </div>
 
-      {/* ── DESKTOP layout — full hero with absolute overlay ── */}
-      <div className="hidden md:block relative w-full min-h-[680px] h-[85vh] pt-16 bottom-8">
+      {/* ── DESKTOP layout ── */}
+      {/* min-h covers small laptops (768px+), lg covers large screens */}
+      <div className="hidden md:block relative w-full min-h-[600px] lg:min-h-[720px] h-[80vh] lg:h-[88vh]">
         <img
           src={item.banner_url || item.poster_url}
           alt={item.title}
@@ -129,14 +127,13 @@ const DetailsPage = () => {
           onError={(e) => fallbackImg(e, item.poster_url || 'https://via.placeholder.com/1280x720/1a1a1a/5a5a5a?text=Aha')}
         />
         <div className="absolute inset-0 bg-gradient-to-r from-black/95 via-black/70 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent/70 to-transparent" />
 
-        {/* outer: full width, positioned at bottom */}
-        <div className="absolute bottom-8 left-0 right-0 z-10 pl-16 pr-12">
-          {/* inner: constrain content width */}
-          <div className="max-w-4xl flex flex-col gap-6 items-start">
-            {/* ThumbnailCard */}
-            <div className="w-80">
+        {/* Content pinned to bottom — outer for position, inner for max-width */}
+        <div className="absolute bottom-16 left-0 right-0 z-10 pl-16 pb-16 pr-12">
+          <div className="max-w-4xl w-full flex flex-col gap-6 items-start">
+            {/* ThumbnailCard — use w-64 on md, w-80 on lg so it fits smaller laptop screens */}
+            <div className="w-64 lg:w-80">
               <ThumbnailCard
                 title={item.title}
                 thumbnailUrl={item.thumbnail_url}
@@ -147,8 +144,8 @@ const DetailsPage = () => {
         </div>
       </div>
 
-      {/* Details */}
-      <div className="max-w-7xl md:mt-16 mx-auto px-6 md:px-12 py-12">
+      {/* Details — mt-8 mobile, mt-12 desktop for consistent spacing */}
+      <div className="max-w-7xl mx-auto px-6 md:px-12 py-8 md:py-12">
         <h3 className="text-xl font-bold mb-6 text-primary border-b border-neutral-800 pb-2">More Information</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           <DetailField label="Cast" value={item.cast?.join(', ')} />
